@@ -1,0 +1,523 @@
+body {
+  font-family: "Comic Sans MS", cursive, sans-serif;
+}
+
+.main-toolbar {
+  height:21px;
+  width:1100px;
+  margin: 5 auto;
+}
+
+.alternate-container {
+  width: 1100px;
+  height: 600px;
+  /*border: 1px solid black;*/
+  margin: 0 auto;
+  position: relative;
+}
+
+.cards-container {
+  /*border: 1px solid black;*/
+  width: 200px;
+}
+
+.basic-actions.cards-container {
+  position: absolute;
+  top:242px;
+  left: 0px;
+}
+
+.me.cards-container {
+  position: absolute;
+  top:368px;
+  left: 0px;
+}
+
+.list-card {
+  height: 29px;
+  /*border: 1px solid gray;*/
+  line-height: 29px;  
+  position: relative;
+}
+
+.list-card .card-cost {
+  width:10px;
+  text-align: right;
+  position: absolute;
+  left: 0px;
+  top: 0px;
+}
+
+.list-card .card-type {
+  width:10px;
+  text-align:left;
+  position: absolute;
+  left: 10px;
+  top: 0px;
+}
+
+.list-card .card-name {
+  position: absolute;
+  top: 0px;
+  left: 24px;
+  line-height: 20px;
+  height: 20px;
+  width: 146px;
+}
+
+.list-card .card-subname {
+  position: absolute;
+  top: 19px;
+  left: 24px;
+  line-height: 10px;
+  height: 10px;
+  width: 146px;
+  font-size: 9px;
+}
+
+.list-card .card-snippet {
+  overflow: hidden;
+  position: absolute;
+  width: 160px;
+  height: 29px;
+  top: 0px;
+  left: 0px;
+}
+
+.list-card .card-snippet img {
+  width: 160px;
+}
+
+[ng-drop].drag-enter {
+  border:solid 5px red;
+}
+    
+.list-card .dice-remaining {
+  position: absolute;
+  top: 0px;
+  left: 191px;
+  line-height: 29px;
+  height: 29px;
+  width: 29px;
+  font-size: 16px;
+  z-index: 2;
+}
+
+.dice {
+  width: 28px;
+  height: 28px;
+  cursor: pointer;
+  z-index: 1;
+}
+
+.dice img {
+  width: 28px;
+  height: 28px;
+}
+
+.list-card .dice {
+  position: absolute;
+  top: 1px;
+  left: 161px;
+}
+
+.play-area {
+  height: 300px;
+  width:720px;
+  position: absolute;
+  left: 200px;
+}
+
+.play-area:before {
+  content: ' ';
+  display: block;
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  z-index: -1;
+  opacity: 0.1;
+  background-image: url('images/AVX-Logo.jpg');
+  background-repeat: no-repeat;
+  background-position: 50% 0;
+  -ms-background-size: cover;
+  -o-background-size: cover;
+  -moz-background-size: cover;
+  -webkit-background-size: cover;
+  background-size: cover;
+}
+
+.opponent.play-area {
+  top: 0px;
+}
+
+.me.play-area {
+  top: 300px;
+}
+
+.card-view {
+  position: absolute;
+  top: 0px;
+  left: 920px;
+  width: 180px;
+  height: 250px;
+}
+
+.card-view img {
+  width: 100%;
+  height: 100%;
+}
+
+.zone {
+  font-size: 36px;
+  line-height: 75px;
+  text-align: center;
+  color: rgba(0,0,0,0.3);
+  border: 5px solid rgba(0,0,0,0);
+}
+
+.zone .drop-zone {
+  width: 100%;
+  height: 100%;
+}
+
+.zone .zone-label {
+  position: absolute;
+  top:0px;
+  left:0px;
+  width:100%;
+  height:100%;
+  text-align: center;
+  z-index: -1;
+}
+
+.transition-zone {
+  height: 75px;
+  width: 240px;
+  left: 0px;
+  position: absolute;
+  background-color: rgba(63, 63, 191, 0.2);
+}
+
+.opponent .transition-zone {
+  top: 0px;
+}
+
+.me .transition-zone {
+  top: 225px;
+}
+
+.reserve-pool {
+  height: 75px;
+  width: 480px;
+  position: absolute;
+  left: 240px;
+  background-color: rgba(255, 255, 255, 0.2);
+}
+
+.opponent .reserve-pool {
+  top: 0px;
+}
+
+.me .reserve-pool {
+  top: 225px;
+}
+
+.used-pile {
+  height: 150px;
+  line-height: 150px;
+  left: 0px;
+  top: 75px;
+  width: 240px;
+  position: absolute;
+  background-color: rgba(0, 0, 255, 0.2);
+}
+
+.field-zone {
+  height: 150px;
+  line-height: 150px;
+  position: absolute;
+  width: 320px;
+  left: 240px;
+  top: 75px;
+  background-color: rgba(0, 255, 0, 0.2);
+}
+
+.prep-zone {
+  height: 150px;
+  line-height: 150px;
+  position: absolute;
+  width: 160px;
+  left: 560px;
+  top: 75px;
+  background-color: rgba(255, 255, 0, 0.2);
+}
+
+.attack-zone {
+  height: 75px;
+  position: absolute;
+  width: 720px;
+  left: 0px;
+  background-color: rgba(255, 0, 0, 0.2);
+}
+
+.opponent .attack-zone {
+  top: 225px;
+  border-bottom: 1px solid black;
+}
+
+.me .attack-zone {
+  top: 0px;
+}
+
+.opponent-life {
+  position: absolute;
+  top: 255px;
+  left: 1012px;
+  width: 82px;
+  height: 60px;
+  background-color: rgba(255, 0, 0, 0.2);
+}
+
+.life-label {
+  position: absolute;
+  top: 4px;
+  left: 0px;
+  width: 100%;
+  height: 25px;
+  text-align: center;
+  font-size: 16px;
+  line-height: 16px;
+  color: rgba(0,0,0,0.3);
+}
+
+.life-text {
+  position: absolute;
+  top: 25px;
+  left: -10px;
+  width: 100%;
+  height: 25px;
+  text-align: center;
+  font-size: 25px;
+  line-height: 25px;
+  color: rgba(0,0,0,0.3);
+}
+
+.life .plusBtn {
+  position: absolute;
+  left: 58px;
+  top: 23px;
+}
+
+.life .minusBtn {
+  position: absolute;
+  left: 58px;
+  top: 41px;
+}
+
+.opponent-bag {
+  position: absolute;
+  top: 255px;
+  left: 925px;
+  width: 82px;
+  height: 60px;
+  background-color: rgba(0,0,255,0.3);
+  line-height: 60px;
+}
+
+.dice-tower {
+  position: absolute;
+  top: 320px;
+  left: 925px;
+  width: 170px;
+  height: 210px;
+  border: 5px solid rgba(0,0,0,0);
+  background-color: rgba(0,255,255,0.3);
+}
+
+.dice-tower .zone-label {
+  position: absolute;
+  top: 80px;
+  left: 0px;
+  width: 100%;
+  height: 25px;
+  text-align: center;
+  font-size: 20px;
+  line-height: 20px;
+  color: rgba(0,0,0,0.3);
+}
+
+.my-life {
+  position: absolute;
+  top: 540px;
+  left: 1012px;
+  width: 82px;
+  height: 60px;
+  background-color: rgba(255, 0, 0, 0.2);
+}
+
+.my-bag {
+  position: absolute;
+  top: 540px;
+  left: 925px;
+  width: 82px;
+  height: 60px;
+  background-color: rgba(0,0,255,0.3);
+  line-height: 60px;
+}
+
+.bag .zone-label {
+  position: absolute;
+  top: 0px;
+  left: 0px;
+  width: 100%;
+  height: 25px;
+  text-align: center;
+  font-size: 16px;
+  line-height: 16px;
+  color: rgba(0,0,0,0.3);
+}
+
+.bag .dice {
+  position: absolute;
+  top: 25px;
+  left: 5px;
+}
+
+.bag .dice-remaining {
+  position: absolute;
+  top: 26px;
+  left: 32px;
+  width: 48px;
+  height: 24px;
+  line-height: 24px;
+  font-size: 24px;
+}
+
+.dice-tower .drop-zone {
+  width: 100%;
+  height: 170px;
+}
+
+.drop-zone .dice {
+  display: inline-block;
+  margin: 2px;
+}
+
+.rollBtn {
+  position:relative;
+  top:0px;
+  width: 100%;
+}
+
+.transitionBtn {
+  position:absolute;
+  left: 212px;
+  top: 54px;
+}
+
+.usedBtn {
+  position: absolute;
+  left: 212px;
+  top: 128px;
+}
+
+.spinning {
+  background: #f00;
+  -webkit-animation-name: spin;
+  -webkit-animation-duration: 400ms;
+  -webkit-animation-iteration-count: 2;
+  -webkit-animation-timing-function: linear;
+  -moz-animation-name: spin;
+  -moz-animation-duration: 400ms;
+  -moz-animation-iteration-count: 2;
+  -moz-animation-timing-function: linear;
+  -ms-animation-name: spin;
+  -ms-animation-duration: 400ms;
+  -ms-animation-iteration-count: 2;
+  -ms-animation-timing-function: linear;
+  
+  animation-name: spin;
+  animation-duration: 400ms;
+  animation-iteration-count: 2;
+  animation-timing-function: linear;
+}
+@-ms-keyframes spin {
+  from { -ms-transform: rotate(0deg); }
+  to { -ms-transform: rotate(360deg); }
+}
+@-moz-keyframes spin {
+  from { -moz-transform: rotate(0deg); }
+  to { -moz-transform: rotate(360deg); }
+}
+@-webkit-keyframes spin {
+  from { -webkit-transform: rotate(0deg); }
+  to { -webkit-transform: rotate(360deg); }
+}
+@keyframes spin {
+  from {
+    transform:rotate(0deg);
+  }
+  to {
+    transform:rotate(360deg);
+  }
+}
+
+.build .cards-container.basic-actions {
+  top: 320px;
+}
+
+.build .cards-container .dice-remaining {
+  left: 170px;
+}
+
+.build .list-card {
+  height: 35px;
+}
+
+.build .list-card .card-snippet {
+  height: 35px;
+}
+
+.list-card .editBtn, .list-card .cancelBtn {
+  position: absolute;
+  left: 190px;
+}
+
+.list-card .plusBtn {
+  position: absolute;
+  left: 229px;
+}
+
+.list-card .minusBtn {
+  position: absolute;
+  left: 268px;
+}
+
+.list-card input {
+  width: 180px;
+}
+
+.build .me.player-label,
+.build .me.cards-container,
+.build .me.basic-actions-label {
+  position: absolute;
+  left: 400px;
+}
+
+.build .me.player-label {
+  top: 0px;
+}
+
+.build .me.cards-container {
+  top: 22px;
+}
+
+.build .me.basic-actions-label {
+  top: 302px;
+}
+
+.build .me.cards-container.basic-actions {
+  top: 321px;
+}

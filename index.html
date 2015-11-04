@@ -1,0 +1,284 @@
+<html>
+<head>
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css">
+  <link rel="stylesheet" href="main.css">
+  <script src="bower_components/angular/angular.js"></script>
+  <script src="bower_components/ngDraggable/ngDraggable.js"></script>
+  <script src="bower_components/angular-local-storage/dist/angular-local-storage.min.js"></script>
+  <!-- <script src="bower_components/ng-context-menu/dist/ng-context-menu.min.js"></script> -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/angular-ui-bootstrap/0.14.3/ui-bootstrap-tpls.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/lodash.js/3.10.1/lodash.min.js"></script>
+  <script src="cards.js"></script>
+  <script src="app.js"></script>
+</head>
+<body ng-app="dm" ng-controller="dmController">
+  <nav class="main-toolbar">
+  <button class="btn btn-warning btn-xs" ng-click="initBuildMode()"><i class="fa fa-pencil"></i> Edit Decks</button>
+    <button class="btn btn-primary btn-xs" ng-click="initPlayMode()"><i class="fa fa-gamepad"></i> Play</button>
+    <button class="btn btn-danger btn-xs" ng-click="reset()"><i class="fa fa-undo"></i> Reset</button>
+    <button class="btn btn-info btn-xs" ng-click="help()"><i class="fa fa-question"></i> Help</button>
+  </nav>
+  <div class="alternate-container build" ng-show="mode=='build'">
+    <div class="opponent player-label">Opponent</div>
+    <div class="opponent cards-container">
+      <div class="list-card" ng-repeat="deckItem in selectedOpponentDeck.cards" ng-mouseover="showCard(deckItem)">
+        <div class="card-snippet" ng-hide="deckItem.editing"><img ng-src="images/{{deckItem.set}}/cards/{{deckItem.number}}.jpg"></div>
+        <div class="dice-remaining" ng-hide="deckItem.editing">{{deckItem.numDice}}</div>
+        <button class="btn btn-primary editBtn" ng-click="deckItem.editing=true" ng-hide="deckItem.editing"><i class="fa fa-pencil"></i></button>
+        <button class="btn btn-danger cancelBtn" ng-click="deckItem.editing=false" ng-show="deckItem.editing"><i class="fa fa-times-circle"></i></button>
+        <button class="btn btn-info plusBtn" ng-click="incrementDice(deckItem,1)" ng-hide="deckItem.editing"><i class="fa fa-plus"></i></button>
+        <button class="btn btn-info minusBtn" ng-click="incrementDice(deckItem,-1)" ng-hide="deckItem.editing"><i class="fa fa-minus"></i></button>
+        <input type="text"
+               placeholder="search by name"
+               ng-model="editingOpponentDeck.cards[$index]"
+               ng-show="deckItem.editing"
+               uib-typeahead="card as card.name+' - '+card.subname+' ('+card.set+')' for card in cards | filter:$viewValue" 
+               typeahead-min-length="3"
+               typeahead-on-select="selectCardDuringEdit($item, selectedOpponentDeck.cards, editingOpponentDeck.cards, $index)"
+               class="form-control">
+      </div>
+    </div>
+
+    <div class="opponent basic-actions-label">Basic Actions</div>
+    <div class="opponent cards-container basic-actions">
+      <div class="list-card" ng-repeat="deckItem in selectedOpponentDeck.actions" ng-mouseover="showCard(deckItem)">
+        <div class="card-snippet" ng-hide="deckItem.editing"><img ng-src="images/{{deckItem.set}}/cards/{{deckItem.number}}.jpg"></div>
+        <div class="dice-remaining" ng-hide="deckItem.editing">3</div>
+        <button class="btn btn-primary editBtn" ng-click="deckItem.editing=true" ng-hide="deckItem.editing"><i class="fa fa-pencil"></i></button>
+        <button class="btn btn-danger cancelBtn" ng-click="deckItem.editing=false" ng-show="deckItem.editing"><i class="fa fa-times-circle"></i></button>
+        <input type="text"
+               placeholder="search by name"
+               ng-model="editingOpponentDeck.actions[$index]"
+               ng-show="deckItem.editing"
+               uib-typeahead="card as card.name+' ('+card.set+')' for card in cards | filter:$viewValue" 
+               typeahead-min-length="3"
+               typeahead-on-select="selectCardDuringEdit($item, selectedOpponentDeck.actions, editingOpponentDeck.actions, $index)"
+               class="form-control">
+      </div>
+    </div>
+
+    <div class="me player-label">Me</div>
+    <div class="me cards-container">
+      <div class="list-card" ng-repeat="deckItem in selectedMyDeck.cards" ng-mouseover="showCard(deckItem)">
+        <div class="card-snippet" ng-hide="deckItem.editing"><img ng-src="images/{{deckItem.set}}/cards/{{deckItem.number}}.jpg"></div>
+        <div class="dice-remaining" ng-hide="deckItem.editing">{{deckItem.numDice}}</div>
+        <button class="btn btn-primary editBtn" ng-click="deckItem.editing=true" ng-hide="deckItem.editing"><i class="fa fa-pencil"></i></button>
+        <button class="btn btn-danger cancelBtn" ng-click="deckItem.editing=false" ng-show="deckItem.editing"><i class="fa fa-times-circle"></i></button>
+        <button class="btn btn-info plusBtn" ng-click="incrementDice(deckItem,1)" ng-hide="deckItem.editing"><i class="fa fa-plus"></i></button>
+        <button class="btn btn-info minusBtn" ng-click="incrementDice(deckItem,-1)" ng-hide="deckItem.editing"><i class="fa fa-minus"></i></button>
+        <input type="text"
+               placeholder="search by name"
+               ng-model="editingMyDeck.cards[$index]"
+               ng-show="deckItem.editing"
+               uib-typeahead="card as card.name+' - '+card.subname+' ('+card.set+')' for card in cards | filter:$viewValue" 
+               typeahead-min-length="3"
+               typeahead-on-select="selectCardDuringEdit($item, selectedMyDeck.cards, editingMyDeck.cards, $index)"
+               class="form-control">
+      </div>
+    </div>
+    <div class="me basic-actions-label">Basic Actions</div>
+    <div class="me cards-container basic-actions">
+      <div class="list-card" ng-repeat="deckItem in selectedMyDeck.actions" ng-mouseover="showCard(deckItem)">
+        <div class="card-snippet" ng-hide="deckItem.editing"><img ng-src="images/{{deckItem.set}}/cards/{{deckItem.number}}.jpg"></div>
+        <div class="dice-remaining" ng-hide="deckItem.editing">3</div>
+        <button class="btn btn-primary editBtn" ng-click="deckItem.editing=true" ng-hide="deckItem.editing"><i class="fa fa-pencil"></i></button>
+        <button class="btn btn-danger cancelBtn" ng-click="deckItem.editing=false" ng-show="deckItem.editing"><i class="fa fa-times-circle"></i></button>
+        <input type="text"
+               placeholder="search by name"
+               ng-model="editingMyDeck.actions[$index]"
+               ng-show="deckItem.editing"
+               uib-typeahead="card as card.name+' ('+card.set+')' for card in cards | filter:$viewValue" 
+               typeahead-min-length="3"
+               typeahead-on-select="selectCardDuringEdit($item, selectedMyDeck.actions, editingMyDeck.actions, $index)"
+               class="form-control">
+      </div>
+    </div>
+
+    <div class="card-view">
+      <img ng-show="shownCard.cardImage" ng-src="{{shownCard.cardImage}}">
+      <img ng-hide="shownCard.cardImage" ng-src="images/{{shownCard.set}}/cards/{{shownCard.number}}.jpg">
+    </div>
+  </div>
+  <div class="alternate-container play" ng-show="mode=='play'">
+    <div class="opponent cards-container" ng-drop="true" ng-drop-success="onDropComplete($data,opponentDeck)">
+      <div class="list-card" ng-repeat="deckItem in opponentDeck" ng-mouseover="showCard(deckItem.card)">
+        <div class="card-snippet"><img ng-src="images/{{deckItem.card.set}}/cards/{{deckItem.card.number}}.jpg"></div>
+        <div class="dice" ng-drag="true" ng-drag-data="deckItem" ng-show="deckItem.numDice>0">
+          <img ng-src="images/{{deckItem.card.set}}/dice/{{deckItem.card.name}}6.png">
+        </div>
+        <div class="dice-remaining">{{deckItem.numDice}}</div>
+      </div>
+    </div>
+
+    <div class="basic-actions cards-container" ng-drop="true" ng-drop-success="onDropComplete($data,basicActions)">
+      <div class="list-card" ng-repeat="deckItem in basicActions" ng-mouseover="showCard(deckItem.card)">
+        <div class="card-snippet"><img ng-src="images/{{deckItem.card.set}}/cards/{{deckItem.card.number}}.jpg"></div>
+        <div class="dice" ng-drag="true" ng-drag-data="deckItem" ng-show="deckItem.numDice>0">
+          <img ng-src="images/BasicAction{{deckItem.color}}4.png">
+        </div>
+        <div class="dice-remaining">{{deckItem.numDice}}</div>
+      </div>
+    </div>
+
+    <div class="me cards-container"  ng-drop="true" ng-drop-success="onDropComplete($data,myDeck)">
+      <div class="list-card" ng-repeat="deckItem in myDeck" ng-mouseover="showCard(deckItem.card)">
+        <div class="card-snippet"><img ng-src="images/{{deckItem.card.set}}/cards/{{deckItem.card.number}}.jpg"></div>
+        <div class="dice" ng-drag="true" ng-drag-data="deckItem" ng-show="deckItem.numDice>0">
+          <img ng-src="images/{{deckItem.card.set}}/dice/{{deckItem.card.name}}6.png">
+        </div>
+        <div class="dice-remaining">{{deckItem.numDice}}</div>
+      </div>
+    </div>
+
+    <div class="opponent play-area">
+      <div class="zone transition-zone" ng-drop="true" ng-drop-success="onDropComplete($data,zones.opponentTransition)">
+        <div class="drop-zone">
+          <div class="dice {{dice.spinning?'spinning':''}}" ng-drag="true" ng-drag-data="dice" ng-repeat="dice in zones.opponentTransition" ng-mouseover="showCard(dice)">
+            <img ng-src="{{dice.images[dice.side]}}">
+          </div>
+        </div>
+        <div class="zone-label">Transition</div>
+        <button class="btn btn-primary btn-xs transitionBtn" title="Move all to used pile" ng-click="moveAll(zones.opponentTransition,zones.opponentUsed)"><i class="fa fa-arrow-down"></i></button>
+      </div>
+      <div class="zone reserve-pool" ng-drop="true" ng-drop-success="onDropComplete($data,zones.opponentReserve)">
+        <div class="drop-zone">
+          <div class="dice {{dice.spinning?'spinning':''}}" ng-drag="true" ng-drag-data="dice" ng-repeat="dice in zones.opponentReserve" ng-mouseover="showCard(dice)">
+            <img ng-src="{{dice.images[dice.side]}}">
+          </div>
+        </div>
+        <div class="zone-label">Reserve</div>
+      </div>
+      <div class="zone used-pile" ng-drop="true" ng-drop-success="onDropComplete($data,zones.opponentUsed)">
+        <div class="drop-zone">
+          <div class="dice {{dice.spinning?'spinning':''}}" ng-drag="true" ng-drag-data="dice" ng-repeat="dice in zones.opponentUsed" ng-mouseover="showCard(dice)">
+            <img ng-src="{{dice.images[dice.side]}}">
+          </div>
+        </div>
+        <div class="zone-label">Used</div>
+        <button class="btn btn-primary btn-xs usedBtn" title="Move all to bag" ng-click="moveAll(zones.opponentUsed,zones.opponentBag)"><i class="fa fa-arrow-right"></i></button>
+      </div>
+      <div class="zone field-zone" ng-drop="true" ng-drop-success="onDropComplete($data,zones.opponentField)">
+        <div class="drop-zone">
+          <div class="dice {{dice.spinning?'spinning':''}}" ng-drag="true" ng-drag-data="dice" ng-repeat="dice in zones.opponentField" ng-mouseover="showCard(dice)">
+            <img ng-src="{{dice.images[dice.side]}}">
+          </div>
+        </div>
+        <div class="zone-label">Field</div>
+      </div>
+      <div class="zone prep-zone" ng-drop="true" ng-drop-success="onDropComplete($data,zones.opponentPrep)">
+        <div class="drop-zone">
+          <div class="dice {{dice.spinning?'spinning':''}}" ng-drag="true" ng-drag-data="dice" ng-repeat="dice in zones.opponentPrep" ng-mouseover="showCard(dice)">
+            <img ng-src="{{dice.images[dice.side]}}">
+          </div>
+        </div>
+        <div class="zone-label">Prep</div>
+      </div>
+      <div class="zone attack-zone" ng-drop="true" ng-drop-success="onDropComplete($data,zones.opponentAttack)">
+        <div class="drop-zone">
+          <div class="dice {{dice.spinning?'spinning':''}}" ng-drag="true" ng-drag-data="dice" ng-repeat="dice in zones.opponentAttack" ng-mouseover="showCard(dice)">
+            <img ng-src="{{dice.images[dice.side]}}">
+          </div>
+        </div>
+        <div class="zone-label">Attack</div>
+      </div>
+    </div>
+
+    <div class="me play-area">
+      <div class="zone attack-zone" ng-drop="true" ng-drop-success="onDropComplete($data,zones.myAttack)">
+        <div class="drop-zone">
+          <div class="dice {{dice.spinning?'spinning':''}}" ng-drag="true" ng-drag-data="dice" ng-repeat="dice in zones.myAttack" ng-mouseover="showCard(dice)">
+            <img ng-src="{{dice.images[dice.side]}}">
+          </div>
+        </div>
+        <div class="zone-label">Attack</div>
+      </div>
+      <div class="zone used-pile" ng-drop="true" ng-drop-success="onDropComplete($data,zones.myUsed)">
+        <div class="drop-zone">
+          <div class="dice {{dice.spinning?'spinning':''}}" ng-drag="true" ng-drag-data="dice" ng-repeat="dice in zones.myUsed" ng-mouseover="showCard(dice)">
+            <img ng-src="{{dice.images[dice.side]}}">
+          </div>
+        </div>
+        <div class="zone-label">Used</div>
+        <button class="btn btn-primary btn-xs usedBtn" title="Move all to bag" ng-click="moveAll(zones.myUsed,zones.myBag)"><i class="fa fa-arrow-right"></i></button>
+      </div>
+      <div class="zone field-zone" ng-drop="true" ng-drop-success="onDropComplete($data,zones.myField)">
+        <div class="drop-zone">
+          <div class="dice {{dice.spinning?'spinning':''}}" ng-drag="true" ng-drag-data="dice" ng-repeat="dice in zones.myField" ng-mouseover="showCard(dice)">
+            <img ng-src="{{dice.images[dice.side]}}">
+          </div>
+        </div>
+        <div class="zone-label">Field</div>
+      </div>
+      <div class="zone prep-zone" ng-drop="true" ng-drop-success="onDropComplete($data,zones.myPrep)">
+        <div class="drop-zone">
+          <div class="dice {{dice.spinning?'spinning':''}}" ng-drag="true" ng-drag-data="dice" ng-repeat="dice in zones.myPrep" ng-mouseover="showCard(dice)">
+            <img ng-src="{{dice.images[dice.side]}}">
+          </div>
+        </div>
+        <div class="zone-label">Prep</div>
+      </div>
+      <div class="zone transition-zone" ng-drop="true" ng-drop-success="onDropComplete($data,zones.myTransition)">
+        <div class="drop-zone">
+          <div class="dice {{dice.spinning?'spinning':''}}" ng-drag="true" ng-drag-data="dice" ng-repeat="dice in zones.myTransition" ng-mouseover="showCard(dice)">
+            <img ng-src="{{dice.images[dice.side]}}">
+          </div>
+        </div>
+        <div class="zone-label">Transition</div>
+        <button class="btn btn-primary btn-xs transitionBtn" title="Move all to used pile" ng-click="moveAll(zones.myTransition,zones.myUsed)"><i class="fa fa-arrow-up"></i></button>
+      </div>
+      <div class="zone reserve-pool" ng-drop="true" ng-drop-success="onDropComplete($data,zones.myReserve)">
+        <div class="drop-zone">
+          <div class="dice {{dice.spinning?'spinning':''}}" ng-drag="true" ng-drag-data="dice" ng-repeat="dice in zones.myReserve" ng-mouseover="showCard(dice)">
+            <img ng-src="{{dice.images[dice.side]}}">
+          </div>
+        </div>
+        <div class="zone-label">Reserve</div>
+      </div>
+    </div>
+
+    <div class="card-view">
+      <img ng-show="shownCard.cardImage" ng-src="{{shownCard.cardImage}}">
+      <img ng-hide="shownCard.cardImage" ng-src="images/{{shownCard.set}}/cards/{{shownCard.number}}.jpg">
+    </div>
+
+
+    <div class="zone bag opponent-bag" ng-drop="true" ng-drop-success="onDropComplete($data,zones.opponentBag)" >
+      <div class="zone-label">Opp Bag</div>
+      <div class="dice" ng-drag="true" ng-drag-data="zones.opponentBag[0]" ng-show="zones.opponentBag.length>0">
+        <img src="images/sidekickQ.png">
+      </div>
+      <div class="dice-remaining">{{zones.opponentBag.length}}</div>
+    </div>
+    <div class="opponent-life life">
+      <div class="life-label">Opp Life</div>
+      <div class="life-text">{{opponentLife}}</div>
+      <button class="btn btn-info plusBtn btn-xs" ng-click="opponentLife=opponentLife+1"><i class="fa fa-plus"></i></button>
+      <button class="btn btn-info minusBtn btn-xs" ng-click="opponentLife=opponentLife-1"><i class="fa fa-minus"></i></button>
+    </div>
+    <div class="zone dice-tower" ng-drop="true" ng-drop-success="onDropComplete($data,zones.rollArea)">
+      <div class="drop-zone">
+        <div class="dice {{dice.spinning?'spinning':''}}" ng-drag="true" ng-drag-data="dice" ng-repeat="dice in zones.rollArea" ng-mouseover="showCard(dice)">
+          <img ng-src="{{dice.images[dice.side]}}">
+        </div>
+      </div>
+      <div class="zone-label">Roll Area</div>
+      <button class="btn btn-primary rollBtn" ng-click="rollAll()">Roll</button>
+    </div>
+
+    <div class="zone bag my-bag" ng-drop="true" ng-drop-success="onDropComplete($data,zones.myBag)">
+      <div class="zone-label">My Bag</div>
+      <div class="dice" ng-drag="true" ng-drag-data="zones.myBag[0]" ng-show="zones.myBag.length>0">
+        <img src="images/sidekickQ.png">
+      </div>
+      <div class="dice-remaining">{{zones.myBag.length}}</div>
+    </div>
+    <div class="my-life life">
+      <div class="life-label">My Life</div>
+      <div class="life-text">{{myLife}}</div>
+      <button class="btn btn-info plusBtn btn-xs" ng-click="myLife=myLife+1"><i class="fa fa-plus"></i></button>
+      <button class="btn btn-info minusBtn btn-xs" ng-click="myLife=myLife-1"><i class="fa fa-minus"></i></button>
+    </div>
+  </div>
+</body>
+</html>

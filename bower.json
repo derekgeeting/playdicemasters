@@ -1,0 +1,22 @@
+{
+  "name": "dm",
+  "version": "0.0.0",
+  "authors": [
+    "Derek Geeting (derekgeeting) <derekgeeting@gmail.com>"
+  ],
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "angular": "~1.4.7",
+    "ngDraggable": "~0.1.8",
+    "ui-bootstrap": "~0.14.3",
+    "angular-local-storage": "~0.2.3",
+    "ng-context-menu": "~1.0.2"
+  }
+}
